@@ -1,0 +1,18 @@
+{
+  "name": "واژبانک",
+  "short_name": "واژبانک",
+  "description": "بانک شخصی لغت و فعل آلمانی، به تفکیک دسته‌بندی و سطح",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#EAEAEA",
+  "theme_color": "#152242",
+  "orientation": "portrait",
+  "dir": "rtl",
+  "lang": "fa",
+  "icons": [
+    { "src": "icon-96.png", "sizes": "96x96", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

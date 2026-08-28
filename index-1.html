@@ -1,0 +1,1383 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>واژبانک</title>
+<meta name="theme-color" content="#152242">
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" href="./icon-192.png">
+<link rel="apple-touch-icon" href="./icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EAEAEA;
+    --card:#FFFFFF;
+    --ink:#232323;
+    --ink-soft:#6B6B6B;
+    --ink-faint:#9B9B9B;
+    --line:#DADADA;
+    --line-strong:#C4C4C4;
+    --accent:#152242;
+    --accent-soft:#E2E2E2;
+    --der-bg:#D8D8D8; --der-bd:#AFAFAF; --der-tx:#3A3A3A;
+    --die-bg:#E4E4E4; --die-bd:#BDBDBD; --die-tx:#3A3A3A;
+    --das-bg:#EFEFEF; --das-bd:#C9C9C9; --das-tx:#3A3A3A;
+    --danger:#5A5A5A;
+    --radius-card:16px;
+    --radius-ctrl:10px;
+    --shadow: 0 1px 2px rgba(30,30,30,0.05), 0 6px 16px rgba(30,30,30,0.06);
+    color-scheme: light;
+  }
+  html[data-theme="dark"]{
+    --paper:#1B1B1B;
+    --card:#252525;
+    --ink:#EDEDED;
+    --ink-soft:#A3A3A3;
+    --ink-faint:#787878;
+    --line:#383838;
+    --line-strong:#4A4A4A;
+    --accent:#EDEDED;
+    --accent-soft:#333333;
+    --der-bg:#3A3A3A; --der-bd:#5A5A5A; --der-tx:#E8E8E8;
+    --die-bg:#333333; --die-bd:#525252; --die-tx:#E8E8E8;
+    --das-bg:#2C2C2C; --das-bd:#484848; --das-tx:#E8E8E8;
+    --danger:#B5B5B5;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 6px 16px rgba(0,0,0,0.35);
+    color-scheme: dark;
+  }
+  html[data-theme="dark"] .fab{ background:#EDEDED; color:#1B1B1B; }
+  html[data-theme="dark"] .nav-item.active::after{ background:var(--ink); }
+  html[data-theme="dark"] .level-picker button.active,
+  html[data-theme="dark"] .art-row button.active{ background:var(--ink); color:#1B1B1B; }
+  html[data-theme="dark"] .btn.primary{ background:var(--ink); color:#1B1B1B; border-color:var(--ink); }
+  html[data-theme="dark"] .btn.danger{ background:var(--danger); color:#1B1B1B; border-color:var(--danger); }
+  html[data-theme="dark"] .toast{ background:#EDEDED; color:#1B1B1B; }
+  html[data-theme="dark"] .dial-item{ background:var(--card); }
+
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0; padding:0; height:100%; background:var(--paper); color:var(--ink);}
+  body{ font-family:'Vazirmatn', system-ui, sans-serif; display:flex; justify-content:center; overscroll-behavior-y:none; }
+  .latin{ font-family:'IBM Plex Sans', 'Vazirmatn', sans-serif; }
+
+  #app{ width:100%; max-width:480px; height:100vh; height:100dvh; display:flex; flex-direction:column; position:relative; background:var(--paper); overflow:hidden; }
+
+  /* ---------- Top bar ---------- */
+  .topbar{ display:flex; align-items:center; justify-content:space-between; padding:12px 16px 4px; flex-shrink:0; }
+  .brand{ display:flex; align-items:center; gap:9px; }
+  .brand-mark{ width:30px; height:30px; border-radius:8px; flex-shrink:0; overflow:hidden; }
+  .brand-mark img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .brand-text h1{ font-size:14px; margin:0; font-weight:700; }
+  .brand-text p{ font-size:8px; margin:1px 0 0; color:var(--ink-faint); letter-spacing:0.2px; }
+  .icon-btn{ width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:transparent; border:1px solid var(--line-strong); color:var(--ink-soft); cursor:pointer; flex-shrink:0; }
+  .icon-btn:active{ background:var(--line); }
+  .topbar-icons{ display:flex; gap:8px; }
+
+  /* ---------- screens ---------- */
+  .screen{ flex:1; min-height:0; }
+  .hidden{ display:none !important; }
+
+  /* ---------- Home: 3 collection cards ---------- */
+  #screen-home{ display:flex; flex-direction:column; overflow:hidden; padding:6px 16px 10px; }
+  .home-title{ flex-shrink:0; padding:6px 2px 12px; }
+  .home-title h2{ margin:0; font-size:16px; font-weight:600; }
+  .home-title p{ margin:2px 0 0; font-size:11.5px; color:var(--ink-soft); }
+  .home-cards{ flex:1; min-height:0; display:flex; flex-direction:column; gap:11px; }
+  .big-card{
+    flex:1; border-radius:20px; padding:16px 20px; color:#fff; position:relative; overflow:hidden;
+    display:flex; flex-direction:column; justify-content:center; cursor:pointer; border:none; text-align:right;
+  }
+  .big-card:active{ transform:scale(0.98); }
+  .big-card .bc-icon{ position:absolute; left:-14px; top:-14px; opacity:0.15; }
+  .big-card .bc-icon svg{ width:92px; height:92px; }
+  .big-card .bc-title{ font-size:19px; font-weight:700; }
+  .big-card .bc-desc{ font-size:11.5px; opacity:0.92; margin-top:3px; line-height:1.6; max-width:82%; }
+  .big-card .bc-count{ font-size:10.5px; opacity:0.92; margin-top:8px; font-family:'IBM Plex Sans'; background:rgba(255,255,255,0.2); display:inline-block; padding:4px 10px; border-radius:20px; }
+
+  /* ---------- Header row used by catgrid + list screens ---------- */
+  #screen-catgrid{ display:flex; flex-direction:column; overflow:hidden; padding:0 16px 10px; }
+  .sub-header{ flex-shrink:0; display:flex; align-items:center; gap:10px; padding:12px 0 4px; }
+  .back-btn{ width:34px; height:34px; border-radius:50%; border:1px solid var(--line-strong); background:transparent; display:flex; align-items:center; justify-content:center; color:var(--ink); cursor:pointer; flex-shrink:0; }
+  .sub-title{ display:flex; flex-direction:column; flex:1; min-width:0; }
+  .sub-title .t1{ font-size:14.5px; font-weight:600; }
+  .sub-title .t2{ font-size:11px; color:var(--ink-soft); }
+
+  .cat-grid-wrap{ flex:1; min-height:0; overflow-y:auto; padding-top:4px; }
+  .cat-grid{ display:grid; grid-template-columns:1fr 1fr; gap:9px; padding-bottom:14px; }
+  .cat-card{
+    position:relative; background:var(--card); border:1px solid var(--line); border-radius:12px;
+    padding:16px 10px 12px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;
+    cursor:pointer; box-shadow:var(--shadow); min-height:76px;
+  }
+  .cat-card:active{ transform:scale(0.97); }
+  .cat-card .lbl{ font-size:12.5px; font-weight:600; color:var(--ink); text-align:center; line-height:1.4; }
+  .cat-card .cnt{ font-size:10px; color:var(--ink-faint); }
+  .cat-del{ position:absolute; top:6px; left:6px; width:22px; height:22px; border-radius:50%; border:none; background:var(--accent-soft); color:var(--ink-faint); display:flex; align-items:center; justify-content:center; cursor:pointer; }
+  .cat-del:active{ background:var(--line-strong); color:var(--ink); }
+
+  #screen-list{ display:flex; flex-direction:column; overflow:hidden; padding:0 16px 10px; }
+  .list-body{ flex:1; min-height:0; overflow-y:auto; padding-bottom:90px; }
+
+  .card-list{ display:flex; flex-direction:column; gap:9px; margin-top:10px; }
+  .idx-card{ background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px 13px; box-shadow:var(--shadow); display:flex; align-items:center; gap:11px; cursor:pointer; }
+  .idx-card:active{ background:var(--accent-soft); }
+  .art-badge{ width:32px; height:32px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-family:'IBM Plex Sans'; font-size:10.5px; font-weight:600; border:1px solid; }
+  .art-badge.der{ background:var(--der-bg); border-color:var(--der-bd); color:var(--der-tx); }
+  .art-badge.die{ background:var(--die-bg); border-color:var(--die-bd); color:var(--die-tx); }
+  .art-badge.das{ background:var(--das-bg); border-color:var(--das-bd); color:var(--das-tx); }
+  .art-badge.none{ background:var(--accent-soft); border-color:var(--line-strong); color:var(--ink-soft); }
+  .idx-main{ flex:1; min-width:0; }
+  .idx-main .de{ font-family:'IBM Plex Sans'; font-size:15px; font-weight:500; color:var(--ink); display:flex; align-items:baseline; gap:6px; flex-wrap:wrap; }
+  .idx-main .de .art-word{ font-size:11.5px; color:var(--ink-faint); font-weight:400; }
+  .idx-main .fa{ font-size:12.5px; color:var(--ink-soft); margin-top:2px; display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+  .lvl-tag{ font-size:9.5px; font-family:'IBM Plex Sans'; font-weight:600; color:var(--ink-soft); background:var(--accent-soft); border:1px solid var(--line-strong); padding:1px 6px; border-radius:7px; }
+  .idx-main .sub-line{ font-size:10.5px; color:var(--ink-faint); margin-top:3px; font-family:'IBM Plex Sans'; }
+  .idx-main .sr-tag{ font-size:10.5px; color:var(--ink-faint); margin-top:3px; font-family:'IBM Plex Sans'; }
+  .idx-actions{ display:flex; gap:2px; flex-shrink:0; }
+  .mini-btn{ width:28px; height:28px; border-radius:50%; border:none; background:transparent; color:var(--ink-faint); display:flex; align-items:center; justify-content:center; cursor:pointer; }
+  .mini-btn:active{ background:var(--line); }
+
+  .empty-state{ text-align:center; padding:50px 20px 20px; color:var(--ink-soft); }
+  .empty-state .ic{ font-size:32px; color:var(--ink-faint); margin-bottom:10px; }
+  .empty-state h3{ margin:0 0 6px; font-size:14.5px; color:var(--ink); font-weight:600; }
+  .empty-state p{ margin:0; font-size:12px; line-height:1.9; }
+
+  /* ---------- FAB + speed dial ---------- */
+  .fab-wrap{ position:absolute; left:18px; bottom:88px; z-index:25; }
+  .fab{ width:46px; height:46px; border-radius:50%; background:var(--accent); color:#fff; border:none; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 14px rgba(0,0,0,0.25); cursor:pointer; position:relative; z-index:2; }
+  .fab:active{ transform:scale(0.95); }
+  .fab svg{ width:20px; height:20px; transition:transform .18s ease; }
+  .fab.open svg{ transform:rotate(45deg); }
+
+  .dial-backdrop{ position:fixed; inset:0; z-index:22; background:transparent; }
+  .dial-backdrop.hidden{ display:none; }
+
+  .speed-dial{ position:absolute; bottom:56px; left:1px; display:flex; flex-direction:column; gap:8px; align-items:flex-start; z-index:23; }
+  .speed-dial.hidden{ display:none; }
+  .dial-item{ display:flex; align-items:center; gap:8px; background:var(--card); border:1px solid var(--line-strong); border-radius:22px; padding:7px 14px 7px 7px; box-shadow:var(--shadow); font-family:'Vazirmatn'; font-size:12.5px; font-weight:600; color:var(--ink); cursor:pointer; white-space:nowrap; }
+  .dial-item:active{ transform:scale(0.96); }
+  .dial-item .di-icon{ width:26px; height:26px; border-radius:50%; background:var(--accent-soft); display:flex; align-items:center; justify-content:center; color:var(--ink); flex-shrink:0; }
+  .dial-item .di-icon svg{ width:14px; height:14px; }
+
+  /* ---------- Bottom nav (4 items) ---------- */
+  .bottom-nav{ flex-shrink:0; display:flex; background:var(--card); border-top:1px solid var(--line); padding-bottom:env(safe-area-inset-bottom); z-index:10; }
+  .nav-item{ flex:1; display:flex; flex-direction:column; align-items:center; gap:3px; padding:9px 0 7px; background:none; border:none; cursor:pointer; color:var(--ink-faint); font-family:'Vazirmatn'; font-size:10.5px; font-weight:500; position:relative; }
+  .nav-item svg{ width:19px; height:19px; }
+  .nav-item.active{ color:var(--ink); }
+  .nav-item.active::after{ content:""; position:absolute; top:0; left:50%; transform:translateX(-50%); width:18px; height:2.5px; background:var(--ink); border-radius:2px; }
+
+  /* ---------- Sheet / modal ---------- */
+  .sheet-overlay{ position:fixed; inset:0; background:rgba(30,30,30,0.42); display:flex; align-items:flex-end; justify-content:center; z-index:50; }
+  .sheet{ width:100%; max-width:480px; background:var(--paper); border-radius:20px 20px 0 0; padding:10px 20px calc(20px + env(safe-area-inset-bottom)); max-height:88vh; overflow-y:auto; }
+  .sheet-handle{ width:36px; height:4px; background:var(--line-strong); border-radius:3px; margin:8px auto 14px; }
+  .sheet h2{ font-size:16px; margin:0 0 16px; font-weight:600; }
+
+  .level-picker{ display:flex; gap:6px; margin-bottom:14px; flex-wrap:wrap; }
+  .level-picker button{ flex:1; min-width:60px; border:1px solid var(--line-strong); background:var(--card); border-radius:var(--radius-ctrl); padding:9px 0; font-family:'IBM Plex Sans'; font-size:12px; font-weight:500; color:var(--ink-soft); cursor:pointer; }
+  .level-picker button.active{ background:var(--ink); color:var(--paper); border-color:var(--ink); }
+
+  .field{ margin-bottom:13px; }
+  .field label{ display:block; font-size:12px; color:var(--ink-soft); margin-bottom:6px; }
+  .field input, .field select{ width:100%; height:42px; border-radius:var(--radius-ctrl); border:1px solid var(--line-strong); background:var(--card); padding:0 13px; font-family:inherit; font-size:14px; color:var(--ink); }
+  .field input:focus, .field select:focus{ outline:2px solid var(--ink); outline-offset:1px; }
+  .field .err{ font-size:11.5px; color:var(--danger); margin-top:5px; display:none; }
+  .field.invalid input{ border-color:var(--danger); }
+  .field.invalid .err{ display:block; }
+  .field .hint{ font-size:11.5px; color:var(--ink-soft); margin-top:7px; line-height:1.8; }
+  .field .hint button{ background:none; border:none; color:var(--ink); text-decoration:underline; cursor:pointer; font-family:inherit; font-size:inherit; padding:0; }
+
+  .art-row{ display:flex; gap:8px; }
+  .art-row button{ flex:1; height:42px; border-radius:var(--radius-ctrl); border:1px solid var(--line-strong); background:var(--card); font-family:'IBM Plex Sans'; font-size:13px; font-weight:500; color:var(--ink-soft); cursor:pointer; }
+  .art-row button.active{ background:var(--ink); border-color:var(--ink); color:var(--paper); }
+
+  .sheet-actions{ display:flex; gap:10px; margin-top:16px; }
+  .btn{ flex:1; height:46px; border-radius:var(--radius-ctrl); border:1px solid var(--line-strong); background:var(--card); font-family:'Vazirmatn'; font-size:14px; font-weight:600; cursor:pointer; color:var(--ink); }
+  .btn.primary{ background:var(--ink); color:#fff; border-color:var(--ink); }
+  .btn.danger{ background:var(--danger); color:#fff; border-color:var(--danger); }
+  .btn:active{ transform:scale(0.98); }
+
+  /* word/verb detail sheet */
+  .detail-word{ font-family:'IBM Plex Sans'; font-size:26px; font-weight:600; color:var(--ink); text-align:center; margin:6px 0 2px; }
+  .detail-plural{ text-align:center; font-size:12.5px; color:var(--ink-faint); font-family:'IBM Plex Sans'; margin-bottom:12px; }
+  .detail-badge-wrap{ display:flex; justify-content:center; align-items:center; gap:8px; margin-bottom:14px; }
+  .detail-meaning{ background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px; text-align:center; font-size:16px; color:var(--ink); margin-bottom:8px; }
+  .detail-meta{ text-align:center; font-size:11.5px; color:var(--ink-faint); margin-bottom:16px; }
+  .detail-conj{ display:flex; gap:8px; justify-content:center; margin-bottom:10px; flex-wrap:wrap; }
+  .detail-conj span{ font-size:11px; font-family:'IBM Plex Sans'; background:var(--accent-soft); border:1px solid var(--line-strong); padding:4px 10px; border-radius:8px; color:var(--ink-soft); }
+
+  .backup-row{ display:flex; align-items:center; gap:12px; padding:14px 4px; border-bottom:1px solid var(--line); cursor:pointer; }
+  .backup-row:last-child{ border-bottom:none; }
+  .backup-row .bi{ width:38px; height:38px; border-radius:50%; background:var(--accent-soft); color:var(--ink); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .backup-row .bt{ flex:1; }
+  .backup-row .bt h4{ margin:0 0 2px; font-size:14px; font-weight:600; }
+  .backup-row .bt p{ margin:0; font-size:11.5px; color:var(--ink-soft); }
+  #import-input{ display:none; }
+
+  .search-hint{ text-align:center; font-size:12px; color:var(--ink-faint); padding:26px 0; }
+
+  .toast{ position:fixed; bottom:96px; left:50%; transform:translateX(-50%); background:var(--ink); color:var(--paper); padding:10px 18px; border-radius:20px; font-size:13px; z-index:100; opacity:0; transition:opacity .25s; pointer-events:none; max-width:80%; text-align:center; }
+  .toast.show{ opacity:1; }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-mark"><img src="./icon-96.png" alt="واژبانک"></div>
+      <div class="brand-text">
+        <h1>واژبانک</h1>
+        <p>بانک لغت و فعل آلمانی</p>
+      </div>
+    </div>
+    <div class="topbar-icons">
+      <button class="icon-btn" id="btn-search" aria-label="جستجو">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </button>
+      <button class="icon-btn" id="btn-theme" aria-label="تغییر پوسته">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="theme-icon"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+      </button>
+      <button class="icon-btn" id="btn-backup" aria-label="پشتیبان‌گیری">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- HOME: 3 collection cards -->
+  <div class="screen" id="screen-home">
+    <div class="home-title">
+      <h2>سلام 👋</h2>
+      <p>کجا می‌خوای بری؟</p>
+    </div>
+    <div class="home-cards">
+      <button class="big-card" id="card-words" style="background:#33518C;">
+        <div class="bc-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        </div>
+        <div class="bc-title">لغت‌ها</div>
+        <div class="bc-desc">دسته‌بندی‌های لغت رو بساز و لغت‌های آلمانی رو باهاشون مرتب کن</div>
+        <div class="bc-count" id="words-home-count">۰ لغت</div>
+      </button>
+      <button class="big-card" id="card-verbs" style="background:#B8862F;">
+        <div class="bc-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="5" r="2"/><path d="M12 7v6l-3 8M12 13l3 8M8 11l4-2 4 2"/></svg>
+        </div>
+        <div class="bc-title">افعال</div>
+        <div class="bc-desc">فعل‌های آلمانی رو با زمان‌های صرفشون اینجا نگه دار</div>
+        <div class="bc-count" id="verbs-home-count">۰ فعل</div>
+      </button>
+      <button class="big-card" id="card-review" style="background:#A24B36;">
+        <div class="bc-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+        </div>
+        <div class="bc-title">تمرین</div>
+        <div class="bc-desc">لغت‌هایی که هنوز حفظ نیستی رو اینجا جدا کن و مرور کن</div>
+        <div class="bc-count" id="review-home-count">۰ لغت</div>
+      </button>
+    </div>
+  </div>
+
+  <!-- CATEGORY GRID (per collection: words / verbs / review) -->
+  <div class="screen hidden" id="screen-catgrid">
+    <div class="sub-header">
+      <button class="back-btn" id="btn-back-catgrid" aria-label="بازگشت">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div class="sub-title">
+        <span class="t1" id="catgrid-title">لغت‌ها</span>
+        <span class="t2" id="catgrid-sub">دسته‌بندی‌ها</span>
+      </div>
+    </div>
+    <div class="cat-grid-wrap">
+      <div class="cat-grid" id="cat-grid"></div>
+      <div class="empty-state hidden" id="catgrid-empty">
+        <div class="ic">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"/></svg>
+        </div>
+        <h3>هنوز دسته‌بندی نساخته‌ای</h3>
+        <p>با دکمه + پایین صفحه، اولین دسته‌بندی این بخش رو بساز.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- LIST SCREEN (words/verbs inside a category) -->
+  <div class="screen hidden" id="screen-list">
+    <div class="sub-header">
+      <button class="back-btn" id="btn-back-list" aria-label="بازگشت">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div class="sub-title">
+        <span class="t1" id="list-title">دسته‌بندی</span>
+        <span class="t2" id="list-sub">لغت‌ها</span>
+      </div>
+    </div>
+    <div class="list-body">
+      <div class="card-list" id="card-list"></div>
+      <div class="empty-state hidden" id="list-empty">
+        <div class="ic">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/></svg>
+        </div>
+        <h3 id="list-empty-title">هنوز لغتی اضافه نکرده‌ای</h3>
+        <p id="list-empty-desc">با دکمه + پایین صفحه، اولین لغت این دسته رو اضافه کن.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="fab-wrap">
+    <div class="speed-dial hidden" id="speed-dial">
+      <button class="dial-item" data-act="cat">
+        <span class="di-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"/><line x1="12" y1="10" x2="12" y2="16"/><line x1="9" y1="13" x2="15" y2="13"/></svg></span>
+        دسته‌بندی
+      </button>
+      <button class="dial-item" data-act="verb">
+        <span class="di-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1.6"/><path d="M12 7v5l-2.5 7M12 12l2.5 7M9 10l3-1.6 3 1.6"/></svg></span>
+        فعل
+      </button>
+      <button class="dial-item" data-act="word">
+        <span class="di-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>
+        لغت
+      </button>
+    </div>
+    <button class="fab" id="btn-fab" aria-label="افزودن">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    </button>
+  </div>
+  <div class="dial-backdrop hidden" id="dial-backdrop"></div>
+
+  <div class="bottom-nav" id="bottom-nav">
+    <button class="nav-item" data-target="words">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      لغت‌ها
+    </button>
+    <button class="nav-item" data-target="verbs">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="2"/><path d="M12 7v6l-3 8M12 13l3 8M8 11l4-2 4 2"/></svg>
+      افعال
+    </button>
+    <button class="nav-item active" data-target="home">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5L12 4l9 7.5"/><path d="M5 10v10a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10"/></svg>
+      صفحه اصلی
+    </button>
+    <button class="nav-item" data-target="review">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+      تمرین
+    </button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ---------------- theme ---------------- */
+const THEME_KEY = "vokabelheft_theme";
+const SUN_PATH = '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>';
+const MOON_PATH = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/>';
+function applyTheme(mode){
+  document.documentElement.setAttribute("data-theme", mode);
+  document.getElementById("theme-icon").innerHTML = mode === "dark" ? MOON_PATH : SUN_PATH;
+  document.querySelector('meta[name="theme-color"]').setAttribute("content", mode === "dark" ? "#1B1B1B" : "#152242");
+  localStorage.setItem(THEME_KEY, mode);
+}
+function initTheme(){
+  const saved = localStorage.getItem(THEME_KEY);
+  if(saved){ applyTheme(saved); return; }
+  const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+  applyTheme(prefersDark ? "dark" : "light");
+}
+document.getElementById("btn-theme").addEventListener("click", ()=>{
+  const current = document.documentElement.getAttribute("data-theme");
+  applyTheme(current === "dark" ? "light" : "dark");
+});
+initTheme();
+
+/* ---------------- helpers ---------------- */
+function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+function faNum(n){ return n.toString().replace(/\d/g, d => "۰۱۲۳۴۵۶۷۸۹"[d]); }
+function escapeHtml(s){ return (s||"").replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function showToast(msg){
+  const t = document.getElementById("toast");
+  t.textContent = msg; t.classList.add("show");
+  clearTimeout(showToast._h);
+  showToast._h = setTimeout(()=>t.classList.remove("show"), 1800);
+}
+
+/* ---------------- storage + schema migration ----------------
+   Data shape (current, v5):
+   { schemaVersion:5,
+     categories:[{id, collection:"words"|"verbs"|"review", name}],
+     words:[{id, categoryId, german, article, plural, meaning, level}],
+     verbs:[{id, categoryId, infinitive, meaning, level, praeteritum, partizip, hilfsverb}] }
+
+   Any future schema change should bump CURRENT_SCHEMA_VERSION and add a
+   migrateVxToVy step below, so old exported backups keep importing cleanly. */
+const STORE_KEY = "vokabelheft_data_v3";
+const CURRENT_SCHEMA_VERSION = 5;
+const LEVELS = ["A1","A2","B1","B2"];
+const DICT_NAMES = ["اول","دوم","سوم","چهارم","پنجم","ششم","هفتم","هشتم","نهم","دهم"];
+
+function freshData(){
+  return { schemaVersion: CURRENT_SCHEMA_VERSION, categories: [], words: [], verbs: [] };
+}
+
+/* very old (pre-category) shape -> v3 shape with level-based categories */
+function migrateV2toV3(d){
+  const categories = [];
+  const catMap = {};
+  LEVELS.forEach(lvl=>{
+    for(let i=1;i<=10;i++){
+      const id = uid();
+      categories.push({ id, level: lvl, name: "لغت‌نامه " + DICT_NAMES[i-1] });
+      catMap[lvl+"-"+i] = id;
+    }
+  });
+  const oldWords = Array.isArray(d.words) ? d.words : [];
+  const ungWords = oldWords.filter(w=>w.level==="UNG");
+  let ungCatId = null;
+  if(ungWords.length){
+    ungCatId = uid();
+    categories.push({ id: ungCatId, level: "UNG", name: "دسته اول" });
+  }
+  const words = oldWords.map(w=>{
+    let categoryId;
+    if(w.level === "UNG"){ categoryId = ungCatId; }
+    else { categoryId = catMap[w.level+"-"+(w.dict||1)] || catMap[w.level+"-1"]; }
+    return { id: w.id, level: w.level, categoryId, german: w.german, article: w.article||"", plural: w.plural||"", meaning: w.meaning };
+  });
+  return { schemaVersion: 3, categories, words };
+}
+
+/* v3 (level-based categories) -> v4 (collection-based categories, level is a word tag) */
+function migrateV3toV4(d){
+  const oldCats = Array.isArray(d.categories) ? d.categories : [];
+  const categories = oldCats.map(c=>{
+    const isReview = c.level === "UNG";
+    return {
+      id: c.id,
+      collection: isReview ? "review" : "words",
+      name: isReview ? c.name : (c.name + (c.level ? " (" + c.level + ")" : ""))
+    };
+  });
+  const words = (Array.isArray(d.words) ? d.words : []).map(w=>({
+    id: w.id,
+    categoryId: w.categoryId,
+    german: w.german,
+    article: w.article || "",
+    plural: w.plural || "",
+    meaning: w.meaning,
+    level: (w.level && w.level !== "UNG") ? w.level : ""
+  }));
+  return { schemaVersion: 4, categories, words };
+}
+
+/* v4 -> v5: purely additive, introduces the separate verbs array/collection */
+function migrateV4toV5(d){
+  return {
+    schemaVersion: 5,
+    categories: Array.isArray(d.categories) ? d.categories : [],
+    words: Array.isArray(d.words) ? d.words : [],
+    verbs: Array.isArray(d.verbs) ? d.verbs : []
+  };
+}
+
+function migrateData(raw){
+  if(!raw || typeof raw !== "object") return freshData();
+  let d = raw;
+  let v = d.schemaVersion;
+  if(!v){
+    if(Array.isArray(d.verbs) && !d.categories){ d = { words: Array.isArray(d.words) ? d.words : [] }; v = 2; }
+    else if(Array.isArray(d.words)){ v = 2; }
+    else { return freshData(); }
+  }
+  if(v < 3){ d = migrateV2toV3(d); v = 3; }
+  if(v < 4){ d = migrateV3toV4(d); v = 4; }
+  if(v < 5){ d = migrateV4toV5(d); v = 5; }
+  /* future: if(v < 6){ d = migrateV5toV6(d); v = 6; } */
+
+  if(!Array.isArray(d.categories)) d.categories = [];
+  d.categories = d.categories.filter(c=>c && c.id).map(c=>({
+    id: c.id,
+    collection: (c.collection==="review"||c.collection==="verbs") ? c.collection : "words",
+    name: c.name || "دسته‌بندی"
+  }));
+  const catIds = new Set(d.categories.map(c=>c.id));
+
+  if(!Array.isArray(d.words)) d.words = [];
+  d.words = d.words.filter(w=>w && w.german).map(w=>({
+    id: w.id || uid(),
+    categoryId: catIds.has(w.categoryId) ? w.categoryId : null,
+    german: String(w.german),
+    article: w.article || "",
+    plural: w.plural || "",
+    meaning: w.meaning || "",
+    level: LEVELS.includes(w.level) ? w.level : ""
+  }));
+
+  if(!Array.isArray(d.verbs)) d.verbs = [];
+  d.verbs = d.verbs.filter(v2=>v2 && v2.infinitive).map(v2=>({
+    id: v2.id || uid(),
+    categoryId: catIds.has(v2.categoryId) ? v2.categoryId : null,
+    infinitive: String(v2.infinitive),
+    meaning: v2.meaning || "",
+    level: LEVELS.includes(v2.level) ? v2.level : "",
+    praeteritum: v2.praeteritum || "",
+    partizip: v2.partizip || "",
+    hilfsverb: (v2.hilfsverb==="haben"||v2.hilfsverb==="sein") ? v2.hilfsverb : ""
+  }));
+
+  d.schemaVersion = CURRENT_SCHEMA_VERSION;
+  return d;
+}
+
+function loadData(){
+  let raw = null;
+  try{ raw = JSON.parse(localStorage.getItem(STORE_KEY)); }catch(e){ raw = null; }
+  return migrateData(raw);
+}
+function saveData(){ localStorage.setItem(STORE_KEY, JSON.stringify(data)); }
+
+let data = loadData();
+saveData(); // persist any migration immediately
+
+const COLLECTION_LABEL = { words: "لغت‌ها", verbs: "افعال", review: "تمرین" };
+
+let currentCollection = "words";
+let currentCategoryId = null;
+let editingId = null;
+let editingType = "word"; // "word" | "verb"
+let formCollection = "words";
+let formCategoryId = null;
+let formArticle = "";
+let formLevel = "";
+let screenStack = [{id:"home"}];
+
+function syncBottomNav(top){
+  const target = top && top.id==="catgrid" ? top.collection : "home";
+  document.querySelectorAll(".nav-item").forEach(b=>b.classList.toggle("active", b.dataset.target===target));
+}
+function catName(id){
+  const c = data.categories.find(x=>x.id===id);
+  return c ? c.name : "";
+}
+function catCollection(id){
+  const c = data.categories.find(x=>x.id===id);
+  return c ? c.collection : "words";
+}
+function itemsArrayFor(collection){ return collection==="verbs" ? data.verbs : data.words; }
+
+/* ---------------- screen routing ---------------- */
+function showScreen(id){
+  document.getElementById("screen-home").classList.toggle("hidden", id!=="home");
+  document.getElementById("screen-catgrid").classList.toggle("hidden", id!=="catgrid");
+  document.getElementById("screen-list").classList.toggle("hidden", id!=="list");
+}
+function renderScreen(desc){
+  showScreen(desc.id);
+  if(desc.id==="home"){ renderHomeCards(); syncBottomNav(desc); }
+  else if(desc.id==="catgrid"){ currentCollection = desc.collection; renderCatGrid(); syncBottomNav(desc); }
+  else if(desc.id==="list"){ currentCollection = desc.collection; currentCategoryId = desc.categoryId; renderList(); syncBottomNav({id:"catgrid", collection:desc.collection}); }
+}
+function goToFresh(desc){
+  screenStack = desc.id === "home" ? [{id:"home"}] : [{id:"home"}, desc];
+  renderScreen(desc);
+  pushNav();
+}
+function goToDeeper(desc){
+  screenStack.push(desc);
+  renderScreen(desc);
+  pushNav();
+}
+function goBackScreen(){
+  if(screenStack.length>1){
+    screenStack.pop();
+    renderScreen(screenStack[screenStack.length-1]);
+    return true;
+  }
+  return false;
+}
+
+/* ---------------- home ---------------- */
+function renderHomeCards(){
+  const wordsCount = data.words.filter(w=>catCollection(w.categoryId)==="words").length;
+  const reviewCount = data.words.filter(w=>catCollection(w.categoryId)==="review").length;
+  const verbsCount = data.verbs.length;
+  document.getElementById("words-home-count").textContent = faNum(wordsCount) + " لغت";
+  document.getElementById("verbs-home-count").textContent = faNum(verbsCount) + " فعل";
+  document.getElementById("review-home-count").textContent = faNum(reviewCount) + " لغت";
+}
+document.getElementById("card-words").addEventListener("click", ()=>goToFresh({id:"catgrid", collection:"words"}));
+document.getElementById("card-verbs").addEventListener("click", ()=>goToFresh({id:"catgrid", collection:"verbs"}));
+document.getElementById("card-review").addEventListener("click", ()=>goToFresh({id:"catgrid", collection:"review"}));
+
+/* ---------------- bottom nav ---------------- */
+document.querySelectorAll(".nav-item").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    const target = btn.dataset.target;
+    if(target === "home"){ goToFresh({id:"home"}); }
+    else { goToFresh({id:"catgrid", collection:target}); }
+  });
+});
+
+/* ---------------- category grid ---------------- */
+function renderCatGrid(){
+  document.getElementById("catgrid-title").textContent = COLLECTION_LABEL[currentCollection];
+  document.getElementById("catgrid-sub").textContent = currentCollection==="review" ? "لغات فراموش‌شده" : (currentCollection==="verbs" ? "دسته‌بندی‌های فعل" : "دسته‌بندی‌های لغت");
+  const cats = data.categories.filter(c=>c.collection===currentCollection);
+  const grid = document.getElementById("cat-grid");
+  grid.innerHTML = "";
+  document.getElementById("catgrid-empty").classList.toggle("hidden", cats.length>0);
+  cats.forEach(cat=>{
+    const arr = itemsArrayFor(cat.collection);
+    const count = arr.filter(it=>it.categoryId===cat.id).length;
+    const card = document.createElement("div");
+    card.className = "cat-card";
+    card.innerHTML = `
+      <button class="cat-del" data-id="${cat.id}" aria-label="حذف دسته‌بندی">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+      <span class="lbl">${escapeHtml(cat.name)}</span>
+      <span class="cnt">${faNum(count)} مورد</span>`;
+    card.addEventListener("click", (e)=>{
+      if(e.target.closest(".cat-del")) return;
+      goToDeeper({id:"list", collection:currentCollection, categoryId:cat.id});
+    });
+    card.querySelector(".cat-del").addEventListener("click", (e)=>{ e.stopPropagation(); confirmDeleteCategory(cat.id); });
+    grid.appendChild(card);
+  });
+}
+document.getElementById("btn-back-catgrid").addEventListener("click", ()=>{ if(goBackScreen()) pushNav(); });
+
+function confirmDeleteCategory(catId){
+  const cat = data.categories.find(c=>c.id===catId);
+  if(!cat) return;
+  const arr = itemsArrayFor(cat.collection);
+  const count = arr.filter(it=>it.categoryId===catId).length;
+  const overlay = document.createElement("div");
+  overlay.className = "sheet-overlay";
+  overlay.innerHTML = `
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <h2>حذف «${escapeHtml(cat.name)}»</h2>
+      <p style="font-size:13px; color:var(--ink-soft); margin-top:-10px; margin-bottom:4px; line-height:1.9;">
+        ${count>0 ? `این دسته‌بندی و ${faNum(count)} مورد داخلش برای همیشه حذف می‌شه.` : "این دسته‌بندی خالیه و حذف می‌شه."}
+      </p>
+      <div class="sheet-actions">
+        <button class="btn" id="btn-cancel-del">انصراف</button>
+        <button class="btn danger" id="btn-confirm-del">حذف</button>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+  pushNav();
+  overlay.addEventListener("click", (e)=>{ if(e.target===overlay) history.back(); });
+  overlay.querySelector("#btn-cancel-del").addEventListener("click", ()=>history.back());
+  overlay.querySelector("#btn-confirm-del").addEventListener("click", ()=>{
+    data.categories = data.categories.filter(c=>c.id!==catId);
+    if(cat.collection==="verbs"){ data.verbs = data.verbs.filter(v=>v.categoryId!==catId); }
+    else { data.words = data.words.filter(w=>w.categoryId!==catId); }
+    saveData();
+    history.back();
+    setTimeout(()=>{ renderCatGrid(); showToast("دسته‌بندی حذف شد"); }, 10);
+  });
+}
+
+/* ---------------- add category sheet ---------------- */
+function openCategoryForm(){
+  const overlay = document.createElement("div");
+  overlay.className = "sheet-overlay";
+  const defCollection = currentCollection || "words";
+  let picked = defCollection;
+  overlay.innerHTML = `
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <h2>افزودن دسته‌بندی جدید</h2>
+      <div class="field">
+        <label>بخش</label>
+        <div class="level-picker" id="cat-coll-picker">
+          <button data-c="words" class="${picked==='words'?'active':''}">لغت‌ها</button>
+          <button data-c="verbs" class="${picked==='verbs'?'active':''}">افعال</button>
+          <button data-c="review" class="${picked==='review'?'active':''}">تمرین</button>
+        </div>
+      </div>
+      <div class="field" id="f-catname">
+        <label>نام دسته‌بندی</label>
+        <input type="text" id="in-catname" placeholder="مثلاً: ۱۰۰ لغت اول">
+        <div class="err">وارد کردن نام الزامی است.</div>
+      </div>
+      <div class="sheet-actions">
+        <button class="btn" id="btn-cat-cancel">انصراف</button>
+        <button class="btn primary" id="btn-cat-save">ذخیره</button>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+  pushNav();
+  overlay.addEventListener("click", (e)=>{ if(e.target===overlay) history.back(); });
+  overlay.querySelectorAll("#cat-coll-picker button").forEach(b=>{
+    b.addEventListener("click", ()=>{
+      picked = b.dataset.c;
+      overlay.querySelectorAll("#cat-coll-picker button").forEach(x=>x.classList.remove("active"));
+      b.classList.add("active");
+    });
+  });
+  overlay.querySelector("#btn-cat-cancel").addEventListener("click", ()=>history.back());
+  overlay.querySelector("#btn-cat-save").addEventListener("click", ()=>{
+    const name = overlay.querySelector("#in-catname").value.trim();
+    overlay.querySelector("#f-catname").classList.toggle("invalid", !name);
+    if(!name) return;
+    data.categories.push({ id: uid(), collection: picked, name });
+    saveData();
+    history.back();
+    setTimeout(()=>{
+      const top = screenStack[screenStack.length-1];
+      if(top && top.id==="catgrid" && top.collection===picked){ renderCatGrid(); }
+      showToast("دسته‌بندی اضافه شد");
+    }, 10);
+  });
+}
+
+/* ---------------- list screen ---------------- */
+function renderList(){
+  document.getElementById("list-title").textContent = catName(currentCategoryId) || COLLECTION_LABEL[currentCollection];
+  document.getElementById("list-sub").textContent = COLLECTION_LABEL[currentCollection];
+  document.getElementById("list-empty-title").textContent = currentCollection==="verbs" ? "هنوز فعلی اضافه نکرده‌ای" : "هنوز لغتی اضافه نکرده‌ای";
+  document.getElementById("list-empty-desc").textContent = currentCollection==="verbs" ? "با دکمه + پایین صفحه، اولین فعل این دسته رو اضافه کن." : "با دکمه + پایین صفحه، اولین لغت این دسته رو اضافه کن.";
+
+  const isVerbs = currentCollection === "verbs";
+  const items = itemsArrayFor(currentCollection)
+    .filter(it=>it.categoryId===currentCategoryId)
+    .sort((a,b)=>(a.german||a.infinitive).localeCompare(b.german||b.infinitive,'de'));
+  const wrap = document.getElementById("card-list");
+  wrap.innerHTML = "";
+  document.getElementById("list-empty").classList.toggle("hidden", items.length>0);
+
+  items.forEach(it=>{
+    const card = document.createElement("div");
+    card.className = "idx-card";
+    if(isVerbs){
+      const sub = [it.praeteritum ? "Prät. "+it.praeteritum : "", it.partizip ? (it.hilfsverb?it.hilfsverb+" ":"")+it.partizip : ""].filter(Boolean).join(" · ");
+      card.innerHTML = `
+        <div class="art-badge none latin">v</div>
+        <div class="idx-main">
+          <div class="de">${escapeHtml(it.infinitive)}</div>
+          <div class="fa">${escapeHtml(it.meaning)}${it.level ? `<span class="lvl-tag latin">${it.level}</span>` : ""}</div>
+          ${sub ? `<div class="sub-line">${escapeHtml(sub)}</div>` : ""}
+        </div>
+        <div class="idx-actions">
+          <button class="mini-btn" data-act="edit" aria-label="ویرایش">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+          </button>
+          <button class="mini-btn" data-act="del" aria-label="حذف">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+          </button>
+        </div>`;
+    } else {
+      const artClass = it.article || "none";
+      const artLabel = it.article ? it.article : "—";
+      card.innerHTML = `
+        <div class="art-badge ${artClass} latin">${artLabel}</div>
+        <div class="idx-main">
+          <div class="de">${escapeHtml(it.german)}${it.plural ? `<span class="art-word">Pl. ${escapeHtml(it.plural)}</span>` : ""}</div>
+          <div class="fa">${escapeHtml(it.meaning)}${it.level ? `<span class="lvl-tag latin">${it.level}</span>` : ""}</div>
+        </div>
+        <div class="idx-actions">
+          <button class="mini-btn" data-act="edit" aria-label="ویرایش">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+          </button>
+          <button class="mini-btn" data-act="del" aria-label="حذف">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+          </button>
+        </div>`;
+    }
+    card.addEventListener("click", (e)=>{
+      if(e.target.closest('[data-act]')) return;
+      openDetail(it.id, isVerbs ? "verb" : "word");
+    });
+    card.querySelector('[data-act="edit"]').addEventListener("click", (e)=>{ e.stopPropagation(); isVerbs ? openVerbForm(it.id) : openForm(it.id); });
+    card.querySelector('[data-act="del"]').addEventListener("click", (e)=>{ e.stopPropagation(); deleteItem(it.id, isVerbs ? "verb" : "word"); });
+    wrap.appendChild(card);
+  });
+}
+document.getElementById("btn-back-list").addEventListener("click", ()=>{ if(goBackScreen()) pushNav(); });
+
+function deleteItem(id, type){
+  if(type==="verb"){ data.verbs = data.verbs.filter(it=>it.id !== id); }
+  else { data.words = data.words.filter(it=>it.id !== id); }
+  saveData();
+  renderList();
+  showToast("حذف شد");
+}
+
+/* ---------------- detail sheet (word or verb) ---------------- */
+function openDetail(id, type){
+  const it = type==="verb" ? data.verbs.find(v=>v.id===id) : data.words.find(w=>w.id===id);
+  if(!it) return;
+  const overlay = document.createElement("div");
+  overlay.className = "sheet-overlay";
+  const coll = catCollection(it.categoryId);
+  const meta = COLLECTION_LABEL[coll] + (catName(it.categoryId) ? " · " + catName(it.categoryId) : "") + (it.level ? " · " + it.level : "");
+  if(type==="verb"){
+    const conj = [];
+    if(it.praeteritum) conj.push("Präteritum: " + escapeHtml(it.praeteritum));
+    if(it.partizip) conj.push("Partizip II: " + (it.hilfsverb?escapeHtml(it.hilfsverb)+" ":"") + escapeHtml(it.partizip));
+    overlay.innerHTML = `
+      <div class="sheet">
+        <div class="sheet-handle"></div>
+        <div class="detail-badge-wrap">
+          <div class="art-badge none latin" style="width:44px;height:44px;font-size:13px;">v</div>
+          ${it.level ? `<span class="lvl-tag latin" style="font-size:11px;padding:3px 9px;">${it.level}</span>` : ""}
+        </div>
+        <div class="detail-word latin">${escapeHtml(it.infinitive)}</div>
+        <div class="detail-meaning">${escapeHtml(it.meaning)}</div>
+        ${conj.length ? `<div class="detail-conj">${conj.map(c=>`<span>${c}</span>`).join("")}</div>` : ""}
+        <div class="detail-meta">${meta}</div>
+        <div class="sheet-actions">
+          <button class="btn" id="btn-detail-edit">ویرایش</button>
+          <button class="btn primary" id="btn-detail-close">بستن</button>
+        </div>
+      </div>`;
+  } else {
+    const artClass = it.article || "none";
+    const artLabel = it.article ? it.article : "بدون آرتیکل";
+    overlay.innerHTML = `
+      <div class="sheet">
+        <div class="sheet-handle"></div>
+        <div class="detail-badge-wrap">
+          <div class="art-badge ${artClass} latin" style="width:44px;height:44px;font-size:13px;">${it.article||"—"}</div>
+          ${it.level ? `<span class="lvl-tag latin" style="font-size:11px;padding:3px 9px;">${it.level}</span>` : ""}
+        </div>
+        <div class="detail-word latin">${escapeHtml(it.german)}</div>
+        ${it.plural ? `<div class="detail-plural">جمع: ${escapeHtml(it.plural)}</div>` : ""}
+        <div class="detail-meaning">${escapeHtml(it.meaning)}</div>
+        <div class="detail-meta">${artLabel} · ${meta}</div>
+        <div class="sheet-actions">
+          <button class="btn" id="btn-detail-edit">ویرایش</button>
+          <button class="btn primary" id="btn-detail-close">بستن</button>
+        </div>
+      </div>`;
+  }
+  document.body.appendChild(overlay);
+  pushNav();
+  overlay.addEventListener("click", (e)=>{ if(e.target===overlay) history.back(); });
+  overlay.querySelector("#btn-detail-close").addEventListener("click", ()=>history.back());
+  overlay.querySelector("#btn-detail-edit").addEventListener("click", ()=>{
+    history.back();
+    setTimeout(()=> type==="verb" ? openVerbForm(id) : openForm(id), 10);
+  });
+}
+
+/* ---------------- FAB speed dial ---------------- */
+let dialOpen = false;
+function toggleDial(open){
+  dialOpen = open !== undefined ? open : !dialOpen;
+  document.getElementById("speed-dial").classList.toggle("hidden", !dialOpen);
+  document.getElementById("dial-backdrop").classList.toggle("hidden", !dialOpen);
+  document.getElementById("btn-fab").classList.toggle("open", dialOpen);
+  if(dialOpen){ pushNav(); }
+}
+document.getElementById("btn-fab").addEventListener("click", ()=>toggleDial());
+document.getElementById("dial-backdrop").addEventListener("click", ()=>toggleDial(false));
+document.querySelectorAll(".dial-item").forEach(b=>{
+  b.addEventListener("click", ()=>{
+    const act = b.dataset.act;
+    toggleDial(false);
+    setTimeout(()=>{
+      if(act==="word") openForm(null);
+      else if(act==="verb") openVerbForm(null);
+      else if(act==="cat") openCategoryForm();
+    }, 160);
+  });
+});
+
+/* ---------------- add/edit word sheet ---------------- */
+function categoryOptionsHtml(collection, selectedId){
+  const cats = data.categories.filter(c=>c.collection===collection);
+  return cats.map(c=>`<option value="${c.id}" ${c.id===selectedId?"selected":""}>${escapeHtml(c.name)}</option>`).join("");
+}
+
+function openForm(id){
+  editingId = id || null;
+  editingType = "word";
+  formCollection = (currentCollection==="verbs" ? "words" : currentCollection) || "words";
+  formCategoryId = (currentCollection!=="verbs") ? currentCategoryId : null;
+  formArticle = "";
+  formLevel = "";
+  const existing = id ? data.words.find(w=>w.id===id) : null;
+  if(existing){
+    formCategoryId = existing.categoryId;
+    formCollection = catCollection(existing.categoryId);
+    formArticle = existing.article || "";
+    formLevel = existing.level || "";
+  }
+  if(!formCategoryId){
+    const firstCat = data.categories.find(c=>c.collection===formCollection);
+    formCategoryId = firstCat ? firstCat.id : null;
+  }
+  buildWordFormSheet(existing);
+}
+
+function buildWordFormSheet(existing){
+  const overlay = document.createElement("div");
+  overlay.className = "sheet-overlay";
+  overlay.id = "form-overlay";
+  const hasCats = data.categories.some(c=>c.collection===formCollection);
+  overlay.innerHTML = `
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <h2>${editingId ? "ویرایش لغت" : "افزودن لغت جدید"}</h2>
+
+      <div class="field">
+        <label>بخش</label>
+        <div class="level-picker" id="coll-picker">
+          <button data-c="words" class="${formCollection==='words'?'active':''}">لغت‌ها</button>
+          <button data-c="review" class="${formCollection==='review'?'active':''}">تمرین</button>
+        </div>
+      </div>
+
+      <div class="field" id="f-cat">
+        <label>دسته‌بندی</label>
+        <select id="in-category" ${hasCats?"":"disabled"}>${categoryOptionsHtml(formCollection, formCategoryId)}</select>
+        <p class="hint ${hasCats?"hidden":""}" id="cat-empty-hint">هنوز دسته‌بندی‌ای برای این بخش نساخته‌ای. <button type="button" id="btn-inline-addcat">یکی بساز</button></p>
+      </div>
+
+      <div class="field">
+        <label>سطح</label>
+        <div class="level-picker" id="lvl-picker">
+          ${LEVELS.map(l=>`<button data-l="${l}" class="latin ${l===formLevel?'active':''}">${l}</button>`).join("")}
+          <button data-l="" class="${formLevel===''?'active':''}">نامشخص</button>
+        </div>
+      </div>
+
+      <div class="field" id="f-german">
+        <label>کلمه آلمانی</label>
+        <input type="text" id="in-german" class="latin" placeholder="Apfel" value="${existing?escapeHtml(existing.german):""}">
+        <div class="err">وارد کردن کلمه آلمانی الزامی است.</div>
+      </div>
+
+      <div class="field">
+        <label>آرتیکل</label>
+        <div class="art-row" id="art-row">
+          <button data-a="der" class="latin ${formArticle==='der'?'active':''}">der</button>
+          <button data-a="die" class="latin ${formArticle==='die'?'active':''}">die</button>
+          <button data-a="das" class="latin ${formArticle==='das'?'active':''}">das</button>
+          <button data-a="" class="${formArticle===''?'active':''}">ندارد</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>جمع (اختیاری)</label>
+        <input type="text" id="in-plural" class="latin" placeholder="Äpfel" value="${existing&&existing.plural?escapeHtml(existing.plural):""}">
+      </div>
+
+      <div class="field" id="f-meaning">
+        <label>معنی فارسی</label>
+        <input type="text" id="in-meaning" placeholder="سیب" value="${existing?escapeHtml(existing.meaning):""}">
+        <div class="err">وارد کردن معنی الزامی است.</div>
+      </div>
+
+      <div class="sheet-actions">
+        ${editingId ? '<button class="btn danger" id="btn-delete">حذف</button>' : '<button class="btn" id="btn-cancel">انصراف</button>'}
+        <button class="btn primary" id="btn-save">ذخیره</button>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+  pushNav();
+  overlay.addEventListener("click", (e)=>{ if(e.target===overlay) history.back(); });
+
+  function refreshCategoryField(){
+    const cats = data.categories.filter(c=>c.collection===formCollection);
+    const sel = overlay.querySelector("#in-category");
+    sel.innerHTML = categoryOptionsHtml(formCollection, formCategoryId);
+    sel.disabled = cats.length===0;
+    overlay.querySelector("#cat-empty-hint").classList.toggle("hidden", cats.length>0);
+    if(cats.length>0 && !cats.some(c=>c.id===formCategoryId)){ formCategoryId = cats[0].id; sel.value = formCategoryId; }
+  }
+
+  overlay.querySelectorAll("#coll-picker button").forEach(b=>{
+    b.addEventListener("click", ()=>{
+      formCollection = b.dataset.c;
+      overlay.querySelectorAll("#coll-picker button").forEach(x=>x.classList.remove("active"));
+      b.classList.add("active");
+      const firstCat = data.categories.find(c=>c.collection===formCollection);
+      formCategoryId = firstCat ? firstCat.id : null;
+      refreshCategoryField();
+    });
+  });
+  overlay.querySelector("#in-category").addEventListener("change", (e)=>{ formCategoryId = e.target.value; });
+  overlay.querySelector("#btn-inline-addcat").addEventListener("click", ()=>{
+    history.back();
+    setTimeout(()=>openCategoryForm(), 10);
+  });
+  overlay.querySelectorAll("#lvl-picker button").forEach(b=>{
+    b.addEventListener("click", ()=>{
+      formLevel = b.dataset.l;
+      overlay.querySelectorAll("#lvl-picker button").forEach(x=>x.classList.remove("active"));
+      b.classList.add("active");
+    });
+  });
+  overlay.querySelectorAll("#art-row button").forEach(b=>{
+    b.addEventListener("click", ()=>{
+      formArticle = b.dataset.a;
+      overlay.querySelectorAll("#art-row button").forEach(x=>x.classList.remove("active"));
+      b.classList.add("active");
+    });
+  });
+  overlay.querySelector("#btn-save").addEventListener("click", saveForm);
+  const cancelBtn = overlay.querySelector("#btn-cancel");
+  if(cancelBtn) cancelBtn.addEventListener("click", ()=>history.back());
+  const delBtn = overlay.querySelector("#btn-delete");
+  if(delBtn) delBtn.addEventListener("click", ()=>{
+    deleteItem(editingId, "word");
+    history.back();
+  });
+}
+
+function saveForm(){
+  const german = document.getElementById("in-german").value.trim();
+  const meaning = document.getElementById("in-meaning").value.trim();
+  document.getElementById("f-german").classList.toggle("invalid", !german);
+  document.getElementById("f-meaning").classList.toggle("invalid", !meaning);
+  if(!german || !meaning) return;
+  if(!formCategoryId){ showToast("اول یک دسته‌بندی برای این بخش بساز"); return; }
+
+  const plural = document.getElementById("in-plural").value.trim();
+  const categoryId = formCategoryId;
+  const level = formLevel;
+
+  if(editingId){
+    const item = data.words.find(w=>w.id===editingId);
+    Object.assign(item, { german, meaning, plural, article: formArticle, level, categoryId });
+  } else {
+    data.words.push({ id: uid(), german, meaning, plural, article: formArticle, level, categoryId });
+  }
+  saveData();
+
+  const targetCollection = formCollection, targetCat = categoryId;
+  history.back();
+  setTimeout(()=>{
+    const top = screenStack[screenStack.length-1];
+    if(top && top.id === "list"){
+      screenStack = [{id:"home"}, {id:"catgrid", collection:targetCollection}, {id:"list", collection:targetCollection, categoryId:targetCat}];
+      renderScreen(screenStack[screenStack.length-1]);
+      pushNav();
+    } else if(top && top.id === "catgrid"){
+      goToFresh({id:"catgrid", collection:targetCollection});
+    } else {
+      renderHomeCards();
+    }
+    showToast("ذخیره شد");
+  }, 10);
+}
+
+/* ---------------- add/edit verb sheet ---------------- */
+function openVerbForm(id){
+  editingId = id || null;
+  editingType = "verb";
+  formCategoryId = (currentCollection==="verbs") ? currentCategoryId : null;
+  formLevel = "";
+  const existing = id ? data.verbs.find(v=>v.id===id) : null;
+  if(existing){ formCategoryId = existing.categoryId; formLevel = existing.level || ""; }
+  if(!formCategoryId){
+    const firstCat = data.categories.find(c=>c.collection==="verbs");
+    formCategoryId = firstCat ? firstCat.id : null;
+  }
+  buildVerbFormSheet(existing);
+}
+
+function buildVerbFormSheet(existing){
+  const overlay = document.createElement("div");
+  overlay.className = "sheet-overlay";
+  overlay.id = "verb-form-overlay";
+  const hasCats = data.categories.some(c=>c.collection==="verbs");
+  overlay.innerHTML = `
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <h2>${editingId ? "ویرایش فعل" : "افزودن فعل جدید"}</h2>
+
+      <div class="field" id="f-vcat">
+        <label>دسته‌بندی</label>
+        <select id="in-vcategory" ${hasCats?"":"disabled"}>${categoryOptionsHtml("verbs", formCategoryId)}</select>
+        <p class="hint ${hasCats?"hidden":""}" id="vcat-empty-hint">هنوز دسته‌بندی‌ای برای افعال نساخته‌ای. <button type="button" id="btn-vinline-addcat">یکی بساز</button></p>
+      </div>
+
+      <div class="field">
+        <label>سطح</label>
+        <div class="level-picker" id="vlvl-picker">
+          ${LEVELS.map(l=>`<button data-l="${l}" class="latin ${l===formLevel?'active':''}">${l}</button>`).join("")}
+          <button data-l="" class="${formLevel===''?'active':''}">نامشخص</button>
+        </div>
+      </div>
+
+      <div class="field" id="f-infinitive">
+        <label>فعل (Infinitiv)</label>
+        <input type="text" id="in-infinitive" class="latin" placeholder="gehen" value="${existing?escapeHtml(existing.infinitive):""}">
+        <div class="err">وارد کردن فعل الزامی است.</div>
+      </div>
+
+      <div class="field" id="f-vmeaning">
+        <label>معنی فارسی</label>
+        <input type="text" id="in-vmeaning" placeholder="رفتن" value="${existing?escapeHtml(existing.meaning):""}">
+        <div class="err">وارد کردن معنی الزامی است.</div>
+      </div>
+
+      <div class="field">
+        <label>Präteritum (اختیاری)</label>
+        <input type="text" id="in-praeteritum" class="latin" placeholder="ging" value="${existing&&existing.praeteritum?escapeHtml(existing.praeteritum):""}">
+      </div>
+
+      <div class="field">
+        <label>Partizip II (اختیاری)</label>
+        <input type="text" id="in-partizip" class="latin" placeholder="gegangen" value="${existing&&existing.partizip?escapeHtml(existing.partizip):""}">
+      </div>
+
+      <div class="field">
+        <label>فعل کمکی</label>
+        <select id="in-hilfsverb">
+          <option value="" ${!existing||!existing.hilfsverb?"selected":""}>—</option>
+          <option value="haben" ${existing&&existing.hilfsverb==="haben"?"selected":""}>haben</option>
+          <option value="sein" ${existing&&existing.hilfsverb==="sein"?"selected":""}>sein</option>
+        </select>
+      </div>
+
+      <div class="sheet-actions">
+        ${editingId ? '<button class="btn danger" id="btn-vdelete">حذف</button>' : '<button class="btn" id="btn-vcancel">انصراف</button>'}
+        <button class="btn primary" id="btn-vsave">ذخیره</button>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+  pushNav();
+  overlay.addEventListener("click", (e)=>{ if(e.target===overlay) history.back(); });
+
+  overlay.querySelector("#in-vcategory").addEventListener("change", (e)=>{ formCategoryId = e.target.value; });
+  overlay.querySelector("#btn-vinline-addcat").addEventListener("click", ()=>{
+    history.back();
+    setTimeout(()=>openCategoryForm(), 10);
+  });
+  overlay.querySelectorAll("#vlvl-picker button").forEach(b=>{
+    b.addEventListener("click", ()=>{
+      formLevel = b.dataset.l;
+      overlay.querySelectorAll("#vlvl-picker button").forEach(x=>x.classList.remove("active"));
+      b.classList.add("active");
+    });
+  });
+  overlay.querySelector("#btn-vsave").addEventListener("click", saveVerbForm);
+  const cancelBtn = overlay.querySelector("#btn-vcancel");
+  if(cancelBtn) cancelBtn.addEventListener("click", ()=>history.back());
+  const delBtn = overlay.querySelector("#btn-vdelete");
+  if(delBtn) delBtn.addEventListener("click", ()=>{
+    deleteItem(editingId, "verb");
+    history.back();
+  });
+}
+
+function saveVerbForm(){
+  const infinitive = document.getElementById("in-infinitive").value.trim();
+  const meaning = document.getElementById("in-vmeaning").value.trim();
+  document.getElementById("f-infinitive").classList.toggle("invalid", !infinitive);
+  document.getElementById("f-vmeaning").classList.toggle("invalid", !meaning);
+  if(!infinitive || !meaning) return;
+  if(!formCategoryId){ showToast("اول یک دسته‌بندی برای افعال بساز"); return; }
+
+  const praeteritum = document.getElementById("in-praeteritum").value.trim();
+  const partizip = document.getElementById("in-partizip").value.trim();
+  const hilfsverb = document.getElementById("in-hilfsverb").value;
+  const categoryId = formCategoryId;
+  const level = formLevel;
+
+  if(editingId){
+    const item = data.verbs.find(v=>v.id===editingId);
+    Object.assign(item, { infinitive, meaning, praeteritum, partizip, hilfsverb, level, categoryId });
+  } else {
+    data.verbs.push({ id: uid(), infinitive, meaning, praeteritum, partizip, hilfsverb, level, categoryId });
+  }
+  saveData();
+
+  history.back();
+  setTimeout(()=>{
+    const top = screenStack[screenStack.length-1];
+    if(top && top.id === "list"){
+      screenStack = [{id:"home"}, {id:"catgrid", collection:"verbs"}, {id:"list", collection:"verbs", categoryId}];
+      renderScreen(screenStack[screenStack.length-1]);
+      pushNav();
+    } else if(top && top.id === "catgrid"){
+      goToFresh({id:"catgrid", collection:"verbs"});
+    } else {
+      renderHomeCards();
+    }
+    showToast("ذخیره شد");
+  }, 10);
+}
+
+/* ---------------- global search ---------------- */
+document.getElementById("btn-search").addEventListener("click", openSearchSheet);
+function openSearchSheet(){
+  const overlay = document.createElement("div");
+  overlay.className = "sheet-overlay";
+  overlay.innerHTML = `
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <h2>جستجو</h2>
+      <div class="field">
+        <input type="text" id="global-search-input" placeholder="جستجو در لغت‌ها و افعال...">
+      </div>
+      <div class="card-list" id="global-search-results" style="margin-top:0;"></div>
+      <p class="search-hint hidden" id="global-search-hint"></p>
+    </div>`;
+  document.body.appendChild(overlay);
+  pushNav();
+  overlay.addEventListener("click", (e)=>{ if(e.target===overlay) history.back(); });
+  const input = overlay.querySelector("#global-search-input");
+  setTimeout(()=>input.focus(), 60);
+  input.addEventListener("input", ()=>renderGlobalSearch(overlay, input.value));
+  renderGlobalSearch(overlay, "");
+}
+function renderGlobalSearch(overlay, q){
+  q = q.trim().toLowerCase();
+  const wrap = overlay.querySelector("#global-search-results");
+  const hint = overlay.querySelector("#global-search-hint");
+  wrap.innerHTML = "";
+  if(!q){ hint.textContent = "برای جستجو در همه‌ی لغت‌ها و افعال تایپ کن"; hint.classList.remove("hidden"); return; }
+
+  const wordResults = data.words.filter(it => (it.german + " " + it.meaning).toLowerCase().includes(q)).map(it=>({ it, type:"word" }));
+  const verbResults = data.verbs.filter(it => (it.infinitive + " " + it.meaning).toLowerCase().includes(q)).map(it=>({ it, type:"verb" }));
+  const results = wordResults.concat(verbResults).slice(0, 60);
+
+  if(results.length===0){ hint.textContent = "موردی پیدا نشد"; hint.classList.remove("hidden"); return; }
+  hint.classList.add("hidden");
+  results.forEach(({it, type})=>{
+    const coll = catCollection(it.categoryId);
+    const tag = COLLECTION_LABEL[coll] + (catName(it.categoryId) ? " · " + catName(it.categoryId) : "") + (it.level ? " · " + it.level : "");
+    const headword = type==="verb" ? it.infinitive : it.german;
+    const artClass = type==="verb" ? "none" : (it.article || "none");
+    const artLabel = type==="verb" ? "v" : (it.article ? it.article : "—");
+    const card = document.createElement("div");
+    card.className = "idx-card";
+    card.innerHTML = `
+      <div class="art-badge ${artClass} latin">${artLabel}</div>
+      <div class="idx-main">
+        <div class="de">${escapeHtml(headword)}</div>
+        <div class="fa">${escapeHtml(it.meaning)}</div>
+        <div class="sr-tag">${escapeHtml(tag)}</div>
+      </div>`;
+    card.addEventListener("click", ()=>{
+      history.back();
+      setTimeout(()=>openDetail(it.id, type), 10);
+    });
+    wrap.appendChild(card);
+  });
+}
+
+/* ---------------- backup sheet ---------------- */
+document.getElementById("btn-backup").addEventListener("click", openBackupSheet);
+function openBackupSheet(){
+  const overlay = document.createElement("div");
+  overlay.className = "sheet-overlay";
+  overlay.id = "backup-overlay";
+  const total = data.words.length + data.verbs.length;
+  overlay.innerHTML = `
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <h2>پشتیبان‌گیری</h2>
+      <p style="font-size:12.5px; color:var(--ink-soft); margin-top:-8px; margin-bottom:6px; line-height:1.9;">
+        در حال حاضر ${faNum(total)} مورد در واژبانک ذخیره شده. می‌توانی از داده‌هایت یک فایل خروجی بگیری یا فایل قبلی را برگردانی؛ فایل‌های پشتیبان قدیمی‌تر هم با نسخه‌های جدید برنامه سازگارن.
+      </p>
+      <div class="backup-row" id="row-export">
+        <div class="bi"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div>
+        <div class="bt"><h4>گرفتن خروجی</h4><p>ذخیره‌ی همه‌ی لغت‌ها، افعال و دسته‌بندی‌ها در یک فایل</p></div>
+      </div>
+      <div class="backup-row" id="row-import">
+        <div class="bi"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
+        <div class="bt"><h4>بازیابی از فایل</h4><p>بازگرداندن داده‌ها از فایل پشتیبان قبلی</p></div>
+      </div>
+      <input type="file" id="import-input" accept="application/json">
+      <div class="sheet-actions"><button class="btn" id="btn-close-backup">بستن</button></div>
+    </div>`;
+  document.body.appendChild(overlay);
+  pushNav();
+  overlay.addEventListener("click", (e)=>{ if(e.target===overlay) history.back(); });
+  overlay.querySelector("#btn-close-backup").addEventListener("click", ()=>history.back());
+  overlay.querySelector("#row-export").addEventListener("click", exportData);
+  overlay.querySelector("#row-import").addEventListener("click", ()=>overlay.querySelector("#import-input").click());
+  overlay.querySelector("#import-input").addEventListener("change", importData);
+}
+
+function exportData(){
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  const date = new Date().toISOString().slice(0,10);
+  a.href = url;
+  a.download = `پشتیبان-واژبانک-${date}.json`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+  showToast("فایل خروجی ذخیره شد");
+}
+
+function importData(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try{
+      const parsed = JSON.parse(reader.result);
+      const migrated = migrateData(parsed);
+      if(!Array.isArray(migrated.words) || !Array.isArray(migrated.categories) || !Array.isArray(migrated.verbs)) throw new Error("bad format");
+      data = migrated;
+      saveData();
+      screenStack = [{id:"home"}];
+      history.back();
+      setTimeout(()=>{
+        renderScreen({id:"home"});
+        showToast("داده‌ها بازیابی شد");
+      }, 10);
+    }catch(err){
+      showToast("فایل پشتیبان معتبر نیست");
+    }
+  };
+  reader.readAsText(file);
+  e.target.value = "";
+}
+
+/* ---------------- back button handling (double-press to exit) ---------------- */
+let exitArmed = false;
+let exitTimer = null;
+function pushNav(){ history.pushState({app:true}, "", location.href); }
+history.pushState({app:true}, "", location.href);
+
+window.addEventListener("popstate", ()=>{
+  if(dialOpen){
+    toggleDial(false);
+    pushNav();
+    return;
+  }
+  const overlay = document.querySelector(".sheet-overlay");
+  if(overlay){
+    overlay.remove();
+    editingId = null;
+    pushNav();
+    return;
+  }
+  if(goBackScreen()){
+    pushNav();
+    return;
+  }
+  if(exitArmed){
+    return;
+  }
+  exitArmed = true;
+  showToast("برای خروج، دوباره دکمه بازگشت را بزنید");
+  pushNav();
+  clearTimeout(exitTimer);
+  exitTimer = setTimeout(()=>{ exitArmed = false; }, 2000);
+});
+
+/* ---------------- init ---------------- */
+renderScreen({id:"home"});
+if("serviceWorker" in navigator){
+  window.addEventListener("load", ()=>{
+    navigator.serviceWorker.register("./sw.js").catch(()=>{});
+  });
+}
+</script>
+</body>
+</html>
